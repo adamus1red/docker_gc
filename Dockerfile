@@ -6,7 +6,7 @@
 #          .· ´¸.·*´¨) ¸.·*¨)
 #           (¸.·´ (¸.·'* ☆ вжух, вжух и в продакшн
 #
-FROM docker:latest
+FROM docker:20.10.8
 LABEL maintainer="Dmitry Malinin <dmitry@malinin.com>"
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
