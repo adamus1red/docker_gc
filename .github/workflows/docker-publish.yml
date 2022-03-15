@@ -68,6 +68,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         uses: docker/build-push-action@7f9d37fa544684fb73bfe4835ed7214c255ce02b
+        id: build
         with:
           context: .
           platforms: linux/amd64,linux/arm64
@@ -75,12 +76,16 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           
-      - name: Sign image with a key
-        if: github.event_name != 'pull_request'
-        run: |
-          echo ${COSIGN_KEY} > /tmp/my_cosign.key && \
-          cosign sign --key /tmp/my_cosign.key ${TAGS}
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
         env:
-          TAGS: ${{ steps.meta.outputs.tags }}
-          COSIGN_KEY: ${{secrets.COSIGN_PRIVATE_KEY}}
-          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+          COSIGN_EXPERIMENTAL: "true"
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: cosign sign ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+
