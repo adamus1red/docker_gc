@@ -76,6 +76,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           
       - name: Sign image with a key
+        if: github.event_name != 'pull_request'
         run: |
           echo ${COSIGN_KEY} > /tmp/my_cosign.key && \
           cosign sign --key /tmp/my_cosign.key ${TAGS}
