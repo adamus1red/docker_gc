@@ -86,4 +86,4 @@ jobs:
             -a "ref=${{ github.sha }}" \
             ${REGISTRY}/${IMAGE_NAME}@${{ steps.build.outputs.digest }}
         env:
-          COSIGN_PASSWORD: "${{ secrets.COSIGN_PRIVATE_KEY }}"
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PRIVATE_KEY }}
