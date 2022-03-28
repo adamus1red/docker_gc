@@ -84,6 +84,9 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           cosign sign --key cosign.key \
-            ghcr.io/your-org/your-repo:some-tag
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            ${REGISTRY}/${IMAGE_NAME}@${{ steps.build.outputs.digest }}
         env:
           COSIGN_PASSWORD: "${{ secrets.COSIGN_PRIVATE_KEY }}"
