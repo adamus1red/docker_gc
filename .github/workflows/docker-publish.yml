@@ -76,14 +76,14 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           
-      - name: Sign container image
-        if: github.event_name != 'pull_request'
-        run: |
-          echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
-          cosign sign --key cosign.key \
-            -a "repo=${{ github.repository }}" \
-            -a "workflow=${{ github.workflow }}" \
-            -a "ref=${{ github.sha }}" \
-            ${REGISTRY}/${IMAGE_NAME}@${{ steps.build.outputs.digest }}
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PRIVATE_KEY }}
+#       - name: Sign container image
+#         if: github.event_name != 'pull_request'
+#         run: |
+#           echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+#           cosign sign --key cosign.key \
+#             -a "repo=${{ github.repository }}" \
+#             -a "workflow=${{ github.workflow }}" \
+#             -a "ref=${{ github.sha }}" \
+#             ${REGISTRY}/${IMAGE_NAME}@${{ steps.build.outputs.digest }}
+#         env:
+#           COSIGN_PASSWORD: ${{ secrets.COSIGN_PRIVATE_KEY }}
